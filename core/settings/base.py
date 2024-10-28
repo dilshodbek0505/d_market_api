@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials
 import environ
+
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -45,7 +45,8 @@ DJANGO_APPS = [
 
 CUSTOM_APPS = [
     "apps.common",
-    "apps.notification"
+    "apps.user",
+    "apps.shop",
 ]
 
 THIRD_PARTY_APPS = [
@@ -53,11 +54,16 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "corsheaders",
     "modeltranslation",
+    "rest_framework.authtoken",
+    "parler",
+    "rosetta"
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        
     ),
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
@@ -73,11 +79,12 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware"
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -132,13 +139,24 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+AUTH_USER_MODEL = 'user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "uz"
 
 TIME_ZONE = "Asia/Tashkent"
+
+LANGUAGES = [
+    ('uz', _('Uzbek')),
+    ('ru', _('Russian'))
+]
+
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale/',
+]
 
 USE_I18N = True
 
@@ -158,6 +176,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 
 # CACHES
 CACHES = {
@@ -186,9 +205,25 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 AES_KEY = env.str("AES_KEY", "")
 
 
-# firebase settings
-cred = credentials.Certificate(BASE_DIR / "serviceAccountKey.json")
-firebase_admin.initialize_app(cred)
-
 # cors headers settings
 CORS_ALLOW_ALL_ORIGINS = True
+
+# crf settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://139b-195-158-9-110.ngrok-free.app'
+]
+
+# language settins
+PARLER_DEFAULT_LANGUAGE_CODE = 'uz'
+
+
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'uz',},
+        {'code': 'ru',},
+    ),
+    'default': {
+        'fallbacks': ['uz'],
+        'hide_untranslated': False,
+    }
+}
