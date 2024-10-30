@@ -1,5 +1,5 @@
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 
 from .serializers import ProductSerializer
 
@@ -12,7 +12,7 @@ class ProductCreateApi(CreateAPIView):
     serializer_class = ProductSerializer
     
 class ProductListApi(ListAPIView):
-    permission_classes = (IsAuthenticated, IsAdminUser)
+    permission_classes = (AllowAny, )
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     
@@ -24,7 +24,7 @@ class ProductListApi(ListAPIView):
         return super().get_serializer(*args, **kwargs)
 
 class ProductDetailsApi(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,  IsAdminUser)
+    permission_classes = (AllowAny, )
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     http_method_names = ['get', 'patch', 'delete']

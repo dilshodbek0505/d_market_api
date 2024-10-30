@@ -25,7 +25,7 @@ class OrderAdminListApi(ListAPIView):
     serializer_class = OrderSerializer
     
 class OrderUserListApi(ListAPIView):
-    permission_classes = (IsAuthenticated)
+    permission_classes = (IsAuthenticated, )
     serializer_class = OrderSerializer
     
     def get_queryset(self):

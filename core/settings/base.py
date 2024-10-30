@@ -210,8 +210,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # crf settings
 CSRF_TRUSTED_ORIGINS = [
-    'https://139b-195-158-9-110.ngrok-free.app'
+    'https://63a7-82-215-81-83.ngrok-free.app'
 ]
+SECURE_SSL_REDIRECT = False
+
 
 # language settins
 PARLER_DEFAULT_LANGUAGE_CODE = 'uz'

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from apps.common.models import BaseModel
 
@@ -23,6 +24,7 @@ class Product(BaseModel):
     
     def __str__(self):
         return self.title
+
     
 class ProductSize(BaseModel):
     class ProductSizeChoices(models.TextChoices):
@@ -45,7 +47,7 @@ class ProductSize(BaseModel):
     
     def __str__(self):
         return f'{self.name} | {self.size} | {self.product.title}'
-
+        
 
 class Order(BaseModel):
     user = models.ForeignKey(User, models.CASCADE, related_name='orders')
@@ -59,6 +61,15 @@ class Order(BaseModel):
             ('cancelled', _('Cancelled'))
         ],
         default='pending'
+    )
+    delivery_time = models.DateTimeField(default=timezone.now)
+    payment_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('card', 'card'),
+            ('cash', 'cash')
+        ],
+        default='cash'
     )
     
     @property
@@ -85,7 +96,7 @@ class OrderItem(BaseModel):
 
 
 class Cart(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
  
     @property
     def total_price(self):
@@ -107,3 +118,4 @@ class CartItem(BaseModel):
 
     def __str__(self):
         return f"{self.product.title} - {self.quantity}"
+    
